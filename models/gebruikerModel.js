@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
   naam: {
@@ -28,6 +29,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['gebruiker', 'admin'],
     default: 'gebruiker',
+  },
+  winkelmand: {
+    items: [
+      {
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
+        },
+        hoeveelheid: { type: Number, required: true },
+      },
+    ],
   },
   actief: {
     type: Boolean,
@@ -63,6 +76,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// Document middleware
 userSchema.pre('save', async function (next) {
   if (!this.isModified('wachtwoord')) return next();
 
@@ -77,11 +91,39 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+// Query middleware
 userSchema.pre(/^find/, function (next) {
   //this wijst naar huidige query
   this.find({ actief: { $ne: false } });
   next();
 });
+
+// Methods
+
+userSchema.methods.addToCart = function (product) {
+  const cartProductIndex = this.winkelmand.items.findIndex((cp) => {
+    return cp.productId.toString() === product._id.toString();
+  });
+  let nieuweHoeveelheid = 1;
+  const updatedCartItems = [...this.winkelmand.items];
+
+  if (cartProductIndex >= 0) {
+    nieuweHoeveelheid = this.winkelmand.items[cartProductIndex].hoeveelheid + 1;
+    updatedCartItems[cartProductIndex].hoeveelheid = nieuweHoeveelheid;
+  } else {
+    updatedCartItems.push({
+      productId: product._id,
+      hoeveelheid: nieuweHoeveelheid,
+    });
+  }
+
+  const updatedCart = {
+    items: updatedCartItems,
+  };
+
+  this.winkelmand = updatedCart;
+  return this.save();
+};
 
 userSchema.methods.correctWachtwoord = async function (
   ingevuldWachtwoord,

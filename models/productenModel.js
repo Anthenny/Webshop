@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const Schema = mongoose.Schema;
 
 const productSchema = new mongoose.Schema({
   naam: {
@@ -44,6 +45,11 @@ const productSchema = new mongoose.Schema({
   gemaaktOp: {
     type: Date,
     default: Date.now(),
+  },
+  gebruikerId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
 });
 

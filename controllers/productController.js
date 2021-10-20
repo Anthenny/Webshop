@@ -56,7 +56,17 @@ exports.getProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.createProduct = catchAsync(async (req, res, next) => {
-  const newProduct = await Product.create(req.body);
+  const newProduct = await Product.create({
+    naam: req.body.naam,
+    kleur: req.body.kleur,
+    categorie: req.body.categorie,
+    prijs: req.body.prijs,
+    aantal: req.body.aantal,
+    maat: req.body.maat,
+    afbeelding: req.body.afbeelding,
+    beschrijving: req.body.beschrijving,
+    gebruikerId: req.gebruiker,
+  });
 
   res.status(201).json({
     succes: 'succes',
