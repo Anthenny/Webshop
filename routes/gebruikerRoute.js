@@ -8,7 +8,25 @@ router.post('/signup', authController.signup);
 router.post('/login', authController.login);
 
 router.post('/wachtwoordVergeten', authController.forgotWachtwoord);
-router.post('/resetWachtwoord', authController.resetWachtwoord);
+router.patch('/resetWachtwoord/:token', authController.resetWachtwoord);
+
+router.patch(
+  '/updateMijnWachtwoord',
+  authController.protect,
+  authController.updateWachtwoord
+);
+
+router.patch(
+  '/updateMij',
+  authController.protect,
+  gebruikerController.updateMij
+);
+
+router.delete(
+  '/deleteMij',
+  authController.protect,
+  gebruikerController.deleteMij
+);
 
 router.get('/', gebruikerController.getAllGebruikers);
 

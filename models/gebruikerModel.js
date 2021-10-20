@@ -29,11 +29,19 @@ const userSchema = new mongoose.Schema({
     enum: ['gebruiker', 'admin'],
     default: 'gebruiker',
   },
+  actief: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
   wachtwoord: {
     type: String,
     required: [true, 'Een gebruiker moet een wachtwoord hebben'],
     minlength: 1,
     select: false,
+  },
+  wachtwoordVeranderdOp: {
+    type: Date,
   },
   wachtwoordResetToken: {
     type: String,
@@ -62,6 +70,19 @@ userSchema.pre('save', async function (next) {
   this.bevestigWachtwoord = undefined;
 });
 
+userSchema.pre('save', function (next) {
+  if (!this.isModified('wachtwoord') || this.isNew) return next();
+
+  this.wachtwoordVeranderdOp = Date.now() - 1000;
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  //this wijst naar huidige query
+  this.find({ actief: { $ne: false } });
+  next();
+});
+
 userSchema.methods.correctWachtwoord = async function (
   ingevuldWachtwoord,
   gebruikerWachtwoord
@@ -76,9 +97,6 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-
-  console.log({ resetToken });
-  console.log(this.wachtwoordResetToken);
 
   this.wachtwoordResetExpires = Date.now() + 10 * 60 * 1000;
 
