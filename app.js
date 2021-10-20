@@ -4,11 +4,13 @@ const globalErrorHandler = require('./controllers/errorController');
 const app = express();
 
 const productRoutes = require('./routes/productRoutes');
+const gebruikersRoutes = require('./routes/gebruikerRoute');
 
 app.use(express.json());
 
 // Routes
 app.use('/producten', productRoutes);
+app.use('/gebruikers', gebruikersRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Kan ${req.originalUrl} niet vinden op deze site!`, 404));
