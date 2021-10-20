@@ -18,8 +18,10 @@ mongoose
     app.listen(port, () => {
       console.log(`App running on ${port}`);
     });
-  })
-  .catch((e) => {
-    // Hier doorverwijzing geven naar een pagina die zegt dat onze database down is.
-    console.log(e.message);
   });
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name, err.message);
+  console.log('Onbehandelde rejection! Shutting down.. ');
+  process.exit(1);
+});

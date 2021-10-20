@@ -1,8 +1,9 @@
 const express = require('express');
-const app = express();
-const productRoutes = require('./routes/productRoutes');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+const app = express();
+
+const productRoutes = require('./routes/productRoutes');
 
 app.use(express.json());
 
