@@ -4,13 +4,26 @@ const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
-
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
+
 const app = express();
 
+app.use((req, res, next) => {
+  // Je hebt 3 headers nodig 1e is hoe het heet 2e argument is vanwaar ze je api mogen gebruiken. ipv * zet je dan localhost:3000
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE'); // Welke methods sta je toe.
+
+  next(); // Laat het doorgaan naar de volgende middleware.
+});
+
 const productRoutes = require('./routes/productRoutes');
-const gebruikersRoutes = require('./routes/gebruikerRoute');
+const gebruikersRoutes = require('./routes/gebruikerRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 
 // Voorkom ddos aanvallen
 const limiter = rateLimit({
@@ -43,6 +56,7 @@ app.use(
 // Routes
 app.use('/producten', productRoutes);
 app.use('/gebruikers', gebruikersRoutes);
+app.use('/winkelmand', cartRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Kan ${req.originalUrl} niet vinden op deze site!`, 404));

@@ -27,7 +27,7 @@ mongoose
     });
   })
   .catch((err) => {
-    // Hier moet een foutmelding komen dat de database even niet functioneert naar behoren
+    // Hier moet een foutmelding komen dat de database even niet functioneert naar behoren via react
     console.log(
       'Verbinding met de database is niet gelukt, probeer het later opnieuw'
     );

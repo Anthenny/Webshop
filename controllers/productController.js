@@ -32,7 +32,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   const products = await query;
 
   res.status(200).json({
-    succes: 'succes',
+    status: 'succes',
     results: products.length,
     data: {
       products,
@@ -48,7 +48,7 @@ exports.getProduct = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json({
-    succes: 'succes',
+    status: 'succes',
     data: {
       product,
     },
@@ -69,7 +69,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   });
 
   res.status(201).json({
-    succes: 'succes',
+    status: 'succes',
     data: {
       newProduct,
     },
@@ -87,7 +87,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   }
 
   res.status(201).json({
-    succes: 'succes',
+    status: 'succes',
     data: {
       product,
     },
@@ -102,6 +102,6 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   }
 
   res.status(204).json({
-    succes: 'succesfully deleted',
+    status: 'succesfully deleted',
   });
 });

@@ -17,9 +17,9 @@ const userSchema = new mongoose.Schema({
     validate: [validator.isEmail, ['Gebruik aub een juist email adress']],
     unique: true,
   },
-  adres: {
+  adress: {
     type: String,
-    required: [true, 'Elke gebruiker moet een adres hebben'],
+    required: [true, 'Elke gebruiker moet een adress hebben'],
   },
   plaats: {
     type: String,
@@ -99,32 +99,6 @@ userSchema.pre(/^find/, function (next) {
 });
 
 // Methods
-
-userSchema.methods.addToCart = function (product) {
-  const cartProductIndex = this.winkelmand.items.findIndex((cp) => {
-    return cp.productId.toString() === product._id.toString();
-  });
-  let nieuweHoeveelheid = 1;
-  const updatedCartItems = [...this.winkelmand.items];
-
-  if (cartProductIndex >= 0) {
-    nieuweHoeveelheid = this.winkelmand.items[cartProductIndex].hoeveelheid + 1;
-    updatedCartItems[cartProductIndex].hoeveelheid = nieuweHoeveelheid;
-  } else {
-    updatedCartItems.push({
-      productId: product._id,
-      hoeveelheid: nieuweHoeveelheid,
-    });
-  }
-
-  const updatedCart = {
-    items: updatedCartItems,
-  };
-
-  this.winkelmand = updatedCart;
-  return this.save();
-};
-
 userSchema.methods.correctWachtwoord = async function (
   ingevuldWachtwoord,
   gebruikerWachtwoord
